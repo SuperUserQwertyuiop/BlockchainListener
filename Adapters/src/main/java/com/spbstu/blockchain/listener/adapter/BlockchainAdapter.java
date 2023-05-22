@@ -10,5 +10,7 @@ public interface BlockchainAdapter {
 
     Object getTransactionByHash(String hash);
 
-    EthBlock getByNumber(Long number);
+    Object getByNumber(Long number);
+
+    Object getLogByTransactionHash(String hash);
 }

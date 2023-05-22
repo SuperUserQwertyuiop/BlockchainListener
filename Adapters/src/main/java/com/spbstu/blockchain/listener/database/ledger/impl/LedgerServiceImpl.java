@@ -34,6 +34,6 @@ public class LedgerServiceImpl implements LedgerService {
 
     @Override
     public void callSaving(Log log) {
-        hyperledgerConnector.createLog("ETHEREUM", log.getHash(), log.getCreationDate().toString(), log.getInfo());
+        hyperledgerConnector.createLog("ETHEREUM", log.getHash(), "1", log.getInfo());
     }
 }

@@ -3,7 +3,9 @@ package com.spbstu.blockchain.listener.adapter.ethereum;
 import com.spbstu.blockchain.listener.adapter.BlockchainAdapter;
 import com.spbstu.blockchain.listener.adapter.BlockchainSubscriber;
 import com.spbstu.blockchain.listener.adapter.ethereum.stub.subscriber.impl.StubEthereumBlockSubscriber;
+import com.spbstu.blockchain.listener.adapter.ethereum.stub.subscriber.impl.StubEthereumSmartContractSubscriber;
 import com.spbstu.blockchain.listener.adapter.model.Block;
+import com.spbstu.blockchain.listener.adapter.model.Log;
 import com.spbstu.blockchain.listener.adapter.model.Transaction;
 import com.spbstu.blockchain.listener.database.couchdb.CouchDbService;
 import com.spbstu.blockchain.listener.database.ledger.LedgerService;
@@ -45,7 +47,7 @@ public class EthereumAdapter implements BlockchainAdapter {
         }
 
         try {
-            BlockchainSubscriber ethereumSmartContractSubscriber = new StubEthereumBlockSubscriber();
+            BlockchainSubscriber ethereumSmartContractSubscriber = new StubEthereumSmartContractSubscriber();
             ethereumSmartContractSubscriber.subscribe(this::handleLogNotificationSubscriberData);
             subscribers.add(ethereumSmartContractSubscriber);
             LOG.info("EthereumSmartContractSubscriber successfully subscribed");
@@ -70,6 +72,11 @@ public class EthereumAdapter implements BlockchainAdapter {
         return Block.map(couchDbService.getBlockByNumber(number));
     }
 
+    @Override
+    public com.spbstu.blockchain.listener.adapter.model.Log getLogByTransactionHash(String hash) {
+        return couchDbService.getLogByTransactionHash(hash);
+    }
+
     private void handleBlockSubscriberData(Object data) {
         Block block = Block.map((EthBlock) data);
         System.out.println(block.getHash());
@@ -81,6 +88,12 @@ public class EthereumAdapter implements BlockchainAdapter {
     }
 
     private void handleLogNotificationSubscriberData(Object data) {
-
+        Log log = Log.map((org.web3j.protocol.websocket.events.Log) data);
+        System.out.println("LOG-" + log.getHash());
+        try {
+            ledgerService.callSaving(log);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

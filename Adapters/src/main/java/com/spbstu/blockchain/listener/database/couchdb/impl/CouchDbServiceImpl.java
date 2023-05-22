@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.spbstu.blockchain.listener.adapter.model.Block;
+import com.spbstu.blockchain.listener.adapter.model.Log;
 import com.spbstu.blockchain.listener.adapter.model.Transaction;
 import com.spbstu.blockchain.listener.database.couchdb.CouchDbService;
 import jakarta.annotation.PostConstruct;
@@ -58,6 +59,11 @@ public class CouchDbServiceImpl implements CouchDbService {
 
     public Transaction getTransactionByBlockHash(String hash) {
         return db.get(Transaction.class, String.format("ETHEREUM-TRANSACTION-%s", hash));
+    }
+
+    @Override
+    public Log getLogByTransactionHash(String hash) {
+        return db.get(Log.class, String.format("ETHEREUM-LOG-%s", hash));
     }
 
     /*
