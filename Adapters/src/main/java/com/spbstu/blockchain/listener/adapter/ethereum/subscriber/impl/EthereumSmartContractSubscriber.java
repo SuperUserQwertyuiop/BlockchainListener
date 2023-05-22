@@ -2,13 +2,14 @@ package com.spbstu.blockchain.listener.adapter.ethereum.subscriber.impl;
 
 import com.spbstu.blockchain.listener.adapter.ethereum.subscriber.WebsocketEthereumBlockchainSubscriber;
 import lombok.SneakyThrows;
+import org.web3j.protocol.websocket.events.Log;
 import org.web3j.protocol.websocket.events.LogNotification;
 
 import java.net.ConnectException;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-public class EthereumSmartContractSubscriber extends WebsocketEthereumBlockchainSubscriber<LogNotification> {
+public class EthereumSmartContractSubscriber extends WebsocketEthereumBlockchainSubscriber<Log> {
 
     private int counter;
 
@@ -18,10 +19,10 @@ public class EthereumSmartContractSubscriber extends WebsocketEthereumBlockchain
 
     @SneakyThrows
     @Override
-    public void subscribe(Consumer<LogNotification> consumer) {
+    public void subscribe(Consumer<Log> consumer) {
         this.subscription = web3
                 .logsNotifications(Collections.emptyList(), Collections.emptyList())
-                .subscribe(consumer::accept, throwable -> {
+                .subscribe(x -> consumer.accept(x.getParams().getResult()), throwable -> {
                     throw new Exception(throwable);
                 });
     }

@@ -36,12 +36,6 @@ public class CouchDbServiceImpl implements CouchDbService {
 
     private CouchDbConnector db;
 
-    public static void main(String[] args) throws MalformedURLException {
-        CouchDbServiceImpl couchDbService = new CouchDbServiceImpl();
-        couchDbService.init();
-        System.out.println(couchDbService.getTransactionByBlockHash("0c9abb8e-549f-45b5-ad96-27b08bbb9d34"));
-    }
-
     @PostConstruct
     private void init() throws MalformedURLException {
         HttpClient httpClient = new StdHttpClient.Builder()
@@ -65,22 +59,4 @@ public class CouchDbServiceImpl implements CouchDbService {
     public Log getLogByTransactionHash(String hash) {
         return db.get(Log.class, String.format("ETHEREUM-LOG-%s", hash));
     }
-
-    /*
-    public Block getBlockByHash(String hash) {
-        ViewQuery viewQuery = createQuery("mychannel_basic")
-                .key(hash);
-        for (Block block : db.queryView(viewQuery, Block.class)) {
-            System.out.println(block);
-        }
-        return null;
-    }
-
-    private ViewQuery createQuery(String viewName) {
-        return new ViewQuery()
-                .dbPath(db.path())
-                .designDocId(NameConventions.designDocName("mychannel_basic"))
-                .viewName(viewName);
-    }
-     */
 }
